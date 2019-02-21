@@ -1,12 +1,13 @@
 import java.util.*;
 
-public class Solution2056 {
+public class Solution {
     public static void main(String[] args) {
-        int max = 0;
+        
         ArrayList<String> goodwords = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
         Map<String, Integer> map = new HashMap<>();
-
+        int max = 0;
+        
         while(scanner.hasNext()){
             String word = scanner.next();
             word = word.toLowerCase();
@@ -29,6 +30,7 @@ public class Solution2056 {
         }
 
         Collections.sort(goodwords);
+        
         for (int i = 0; i < goodwords.size(); i++) {
             System.out.println(goodwords.get(i));
         }
