@@ -104,10 +104,7 @@ public class BeanUtils {
         boolean correctness = false;
 
         TypeVariable<Method>[] setterParameters = setter.getTypeParameters();
-
-        // correct setters have only one parameter
-        //TypeVariable<Method> setterParameter = setterParameters[0];
-
+        
         Class<?> getterParameter = getter.getReturnType();
 
         if ((getterParameter.equals(setter.getParameterTypes()[0])) ||
