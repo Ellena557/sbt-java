@@ -33,7 +33,7 @@ public class BeanUtils {
         List<Method> gettersList = getGettersList(fromClass);
         List<Method> settersList = getSettersList(toClass);
 
-        HashMap<Method, Method> correspondence = corellateGettersAndSetters(gettersList, settersList);
+        HashMap<Method, Method> correspondence = correlateGettersAndSetters(gettersList, settersList);
 
         for (Map.Entry<Method, Method> methods : correspondence.entrySet()) {
             Method getter = methods.getKey();
@@ -42,7 +42,7 @@ public class BeanUtils {
             // to do: возможно, в другом месте это лучше переписать
             getter.setAccessible(true);
             setter.setAccessible(true);
-            
+
             setter.invoke(to, getter.invoke(from));
         }
 
@@ -133,10 +133,15 @@ public class BeanUtils {
         return name;
     }
 
-    private static HashMap<Method, Method> corellateGettersAndSetters(List<Method> getters, List<Method> setters){
+    private static HashMap<Method, Method> correlateGettersAndSetters(List<Method> getters, List<Method> setters){
+
+        /**
+         * This method correlates methods from getters and setters lists.
+         */
+
         HashMap<Method, Method> correspondence = new HashMap<>();
-        for ( Method getter : getters) {
-            for ( Method setter : setters) {
+        for (Method getter : getters) {
+            for (Method setter : setters) {
                 if (methodName(getter).equals(methodName(setter)) &&
                         parameterCorrectness(getter, setter)) {
                     correspondence.put(getter, setter);
