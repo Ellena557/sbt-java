@@ -1,6 +1,5 @@
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,13 +38,11 @@ public class BeanUtils {
             Method getter = methods.getKey();
             Method setter = methods.getValue();
 
-            // to do: возможно, в другом месте это лучше переписать
             getter.setAccessible(true);
             setter.setAccessible(true);
 
             setter.invoke(to, getter.invoke(from));
         }
-
     }
 
     private static List<Method> getGettersList(Class<?> clazz) {
@@ -62,7 +59,7 @@ public class BeanUtils {
 
     private static boolean isGetter(Method method){
         boolean methodIsGetter = false;
-        if ( (method.getName().startsWith("get")) &&
+        if ((method.getName().startsWith("get")) &&
                 (method.getParameterTypes().length == 0)) {
             // добавить в if про возвращаемое значение -- должно совпадать с нужным
             methodIsGetter = true;
@@ -87,7 +84,6 @@ public class BeanUtils {
         boolean methodIsSetter = false;
         if ((method.getName().startsWith("set")) &&
                 (method.getParameterTypes().length == 1)) {
-            // возможно, в if про возвращаемое значение добавить
             methodIsSetter = true;
         }
 
@@ -103,8 +99,6 @@ public class BeanUtils {
 
         boolean correctness = false;
 
-        TypeVariable<Method>[] setterParameters = setter.getTypeParameters();
-        
         Class<?> getterParameter = getter.getReturnType();
 
         if ((getterParameter.equals(setter.getParameterTypes()[0])) ||
