@@ -6,23 +6,22 @@ import java.util.List;
 import java.util.Map;
 
 public class BeanUtils {
-
-          /**
-          * Scans object "from" for all getters. If object "to"
-          * contains correspondent setter, it will invoke it
-          * to set property value for "to" which equals to the property
-          * of "from".
-          * <p/>
-          * The type in setter should be compatible to the value returned
-          * by getter (if not, no invocation performed).
-          * Compatible means that parameter type in setter should
-          * be the same or be superclass of the return type of the getter.
-          * <p/>
-          * The method takes care only about public methods.
-          *
-          * @param to   Object which properties will be set.
-          * @param from Object which properties will be used to get values.
-          */
+    /**
+     * Scans object "from" for all getters. If object "to"
+     * contains correspondent setter, it will invoke it
+     * to set property value for "to" which equals to the property
+     * of "from".
+     * <p/>
+     * The type in setter should be compatible to the value returned
+     * by getter (if not, no invocation performed).
+     * Compatible means that parameter type in setter should
+     * be the same or be superclass of the return type of the getter.
+     * <p/>
+     * The method takes care only about public methods.
+     *
+     * @param to   Object which properties will be set.
+     * @param from Object which properties will be used to get values.
+     */
 
     public static void assign(Object to, Object from) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
@@ -61,7 +60,6 @@ public class BeanUtils {
         boolean methodIsGetter = false;
         if ((method.getName().startsWith("get")) &&
                 (method.getParameterTypes().length == 0)) {
-            // добавить в if про возвращаемое значение -- должно совпадать с нужным
             methodIsGetter = true;
         }
 
@@ -90,13 +88,12 @@ public class BeanUtils {
         return methodIsSetter;
     }
 
+    /**
+     * This function checks that the parameter type in setter should be the same or be superclass
+     * of the return type of the getter.
+     * @return returns the feasibility of this condition
+     */
     private static boolean parameterCorrectness(Method getter, Method setter){
-
-        /**
-         * The parameter type in setter should be the same or be superclass
-         * of the return type of the getter.
-         */
-
         boolean correctness = false;
 
         Class<?> getterParameter = getter.getReturnType();
@@ -110,10 +107,11 @@ public class BeanUtils {
         return correctness;
     }
 
+    /**
+     * This function for appropriate methods (getters and setters) finds their names.
+     * @return returns the name of the method
+     */
     private static String methodName(Method method){
-        /**
-         * For appropriate methods (getters and setters) this method returns their names.
-         */
 
         // name with the beginning "get" or "set"
         String fullname = method.getName();
@@ -124,11 +122,10 @@ public class BeanUtils {
         return name;
     }
 
+    /**
+     * This function correlates methods from getters and setters lists.
+     */
     private static HashMap<Method, Method> correlateGettersAndSetters(List<Method> getters, List<Method> setters){
-
-        /**
-         * This method correlates methods from getters and setters lists.
-         */
 
         HashMap<Method, Method> correspondence = new HashMap<>();
         for (Method getter : getters) {
