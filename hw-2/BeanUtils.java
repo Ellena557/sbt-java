@@ -59,7 +59,8 @@ public class BeanUtils {
     private static boolean isGetter(Method method){
         boolean methodIsGetter = false;
         if ((method.getName().startsWith("get")) &&
-                (method.getParameterTypes().length == 0)) {
+                (method.getParameterTypes().length == 0) &&
+                !(void.class.equals(method.getReturnType()))) {
             methodIsGetter = true;
         }
 
@@ -81,7 +82,8 @@ public class BeanUtils {
     private static boolean isSetter(Method method) {
         boolean methodIsSetter = false;
         if ((method.getName().startsWith("set")) &&
-                (method.getParameterTypes().length == 1)) {
+                (method.getParameterTypes().length == 1) &&
+                (void.class.equals(method.getReturnType()))) {
             methodIsSetter = true;
         }
 
