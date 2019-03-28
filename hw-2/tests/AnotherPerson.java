@@ -3,13 +3,6 @@ public class AnotherPerson {
     private int age;
     private String profession;
 
-    /*public AnotherPerson(String name, int age, String profession) {
-        this.name = name;
-        this.age = age;
-        this.profession = profession;
-    }
-    */
-
     public int getAge() {
         return age;
     }
