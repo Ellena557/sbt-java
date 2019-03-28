@@ -2,6 +2,7 @@ public class Person {
     public String name;
     private int age;
     private String hairColor;
+    private String gender;
 
     public int getAge() {
         return age;
@@ -15,6 +16,10 @@ public class Person {
         return hairColor;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
     public void setAge(int age) {
         this.age = age;
     }
@@ -25,5 +30,9 @@ public class Person {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }
