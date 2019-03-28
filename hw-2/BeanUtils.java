@@ -31,7 +31,7 @@ public class BeanUtils {
         List<Method> gettersList = getGettersList(fromClass);
         List<Method> settersList = getSettersList(toClass);
 
-        HashMap<Method, Method> correspondence = correlateGettersAndSetters(gettersList, settersList);
+        Map<Method, Method> correspondence = correlateGettersAndSetters(gettersList, settersList);
 
         for (Map.Entry<Method, Method> methods : correspondence.entrySet()) {
             Method getter = methods.getKey();
@@ -127,9 +127,9 @@ public class BeanUtils {
     /**
      * This function correlates methods from getters and setters lists.
      */
-    private static HashMap<Method, Method> correlateGettersAndSetters(List<Method> getters, List<Method> setters){
+    private static Map<Method, Method> correlateGettersAndSetters(List<Method> getters, List<Method> setters){
 
-        HashMap<Method, Method> correspondence = new HashMap<>();
+        Map<Method, Method> correspondence = new HashMap<>();
         for (Method getter : getters) {
             for (Method setter : setters) {
                 if (methodName(getter).equals(methodName(setter)) &&
