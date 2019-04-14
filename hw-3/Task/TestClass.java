@@ -12,11 +12,11 @@ public class TestClass {
             Thread thread = new Thread(() -> {
                 try {
                     System.out.println(Thread.currentThread().getName() + " : " + task.get());
-
                 } catch (Exception e) {
                     e.getMessage();
                 }
             });
+            
             thread.start();
         }
     }
