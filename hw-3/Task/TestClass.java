@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 public class TestClass {
-    static int counter;
 
     public static void main(String[] args) throws InterruptedException {
         System.out.println("Start run1");
@@ -35,14 +34,13 @@ public class TestClass {
 
             thread.start();
         }
-        //System.out.println("Finish run1");
     }
 
     public static void run2() throws InterruptedException {
 
-        counter = 5;
-
+        int counter = 5;
         Thread.sleep(100);
+
         Task<Integer> task = new Task<>(() -> {
             Thread.sleep(100);
             return counter;
@@ -60,7 +58,6 @@ public class TestClass {
 
             thread.start();
         }
-
     }
 
     private static void runThread(Task<Integer> task){
@@ -68,6 +65,4 @@ public class TestClass {
             System.out.println(Thread.currentThread().getName() + " : " + task.get() + " iteration " + i);
         }
     }
-
-
 }
