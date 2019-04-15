@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
-
 public class TestClass {
 
     public static void main(String[] args) throws InterruptedException {
@@ -13,10 +10,10 @@ public class TestClass {
         System.out.println("Start run2");
         run2();
         System.out.println("Finish run2");
-
     }
 
     public static void run1(){
+        
         Task<String> task = new Task<>(() -> {
             Thread.sleep(100);
             return "task answer";
