@@ -1,9 +1,6 @@
-import com.sun.jmx.snmp.tasks.Task;
 import org.junit.Test;
 
 import java.util.ArrayList;
-
-import static org.junit.Assert.*;
 
 public class FixedThreadPoolTest {
 
@@ -22,8 +19,6 @@ public class FixedThreadPoolTest {
         for (Runnable task : tasks) {
             threadPool.execute(task);
         }
-
-        //threadPool.runTasks();
     }
 
     static class Task implements Runnable {
@@ -40,7 +35,6 @@ public class FixedThreadPoolTest {
             System.out.println("Task: " + number + " is created by thread: " + createdBy + " and is executed by: "
                         + Thread.currentThread().getName());
         }
-
     }
 
     @Test
@@ -58,7 +52,5 @@ public class FixedThreadPoolTest {
         for (Runnable task : tasks) {
             threadPool2.execute(task);
         }
-
-        //threadPool.runTasks();
     }
 }
