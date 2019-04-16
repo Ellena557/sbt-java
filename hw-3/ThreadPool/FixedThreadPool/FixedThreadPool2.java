@@ -22,16 +22,13 @@ public class FixedThreadPool2 implements ThreadPool {
 
     @Override
     public void start() {
-        //workerThreads = null;
         for (int count = 0; count < numThreads; count++) {
             String threadName = "Thread_" + count;
-            //System.out.println(threadName);
-            Thread thread = new Thread(() -> {runTasks();}) ;
+            Thread thread = new Thread(() -> runTasks()) ;
             thread.setName(threadName);
             workerThreads.add(thread);
             thread.start();
         }
-        //System.out.println(workerThreads + "hooray");
     }
 
     @Override
@@ -49,36 +46,23 @@ public class FixedThreadPool2 implements ThreadPool {
     public void runTasks(){
         start();
         while (!taskQueue.isEmpty()){
-            //System.out.println(workerThreads);
-            for (Thread thread: workerThreads ) {
-                //thread.start();
-            }
-            if(!taskQueue.isEmpty()) {
-                synchronized (taskQueue) {
-                    if (!taskQueue.isEmpty()) {
-                        Runnable runnable = taskQueue.remove();
-                        String threadName = Thread.currentThread().getName();
-                        System.out.println("Task started by" + threadName);
-                        runnable.run();
-                        //execute(runnable);
-                        System.out.println("Task completed by" + threadName);
-                    } else {
-                        try {
-                            System.out.println("Waiting for tasks");
-                            taskQueue.wait(1);
-                            break;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+            synchronized (taskQueue) {
+                if (!taskQueue.isEmpty()) {
+                    Runnable runnable = taskQueue.remove();
+                    String threadName = Thread.currentThread().getName();
+                    System.out.println("Task started by" + threadName);
+                    runnable.run();
+                    System.out.println("Task completed by" + threadName);
+                } else {
+                    try {
+                        System.out.println("Waiting for tasks");
+                        taskQueue.wait(1);
+                        break;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
             }
         }
     }
 }
-
-
-
-
-
-
