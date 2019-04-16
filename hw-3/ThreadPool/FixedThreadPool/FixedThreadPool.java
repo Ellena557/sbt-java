@@ -22,16 +22,13 @@ public class FixedThreadPool implements ThreadPool {
 
     @Override
     public void start() {
-        //workerThreads = null;
         for (int count = 0; count < numThreads; count++) {
             String threadName = "Thread_" + count;
-            //System.out.println(threadName);
-            Thread thread = new Thread(() -> {runTasks();}) ;
+            Thread thread = new Thread(() -> runTasks()) ;
             thread.setName(threadName);
             workerThreads.add(thread);
             thread.start();
         }
-        //System.out.println(workerThreads + "hooray");
     }
 
     @Override
@@ -42,17 +39,13 @@ public class FixedThreadPool implements ThreadPool {
         
         synchronized (taskQueue) {
             taskQueue.add(runnable);
-            taskQueue.notify();   // do we need it?
+            taskQueue.notify();
         }
     }
 
     public void runTasks(){
         start();
         while (!taskQueue.isEmpty()){
-            //System.out.println(workerThreads);
-            for (Thread thread: workerThreads ) {
-                //thread.start();
-            }
             if(!taskQueue.isEmpty()) {
                 synchronized (taskQueue.peek()) {
                     Runnable runnable = taskQueue.poll();
@@ -70,6 +63,3 @@ public class FixedThreadPool implements ThreadPool {
         }
     }
 }
-
-
-
