@@ -24,7 +24,13 @@ public class FixedThreadPool implements ThreadPool {
     public void start() {
         for (int count = 0; count < numThreads; count++) {
             String threadName = "Thread_" + count;
-            Thread thread = new Thread(() -> runTasks()) ;
+            Thread thread = new Thread(() -> {
+                try {
+                    runTasks();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }) ;
             thread.setName(threadName);
             workerThreads.add(thread);
             thread.start();
@@ -43,7 +49,7 @@ public class FixedThreadPool implements ThreadPool {
         }
     }
 
-    public void runTasks(){
+    public void runTasks() throws InterruptedException {
         start();
         while (!taskQueue.isEmpty()){
             if(!taskQueue.isEmpty()) {
@@ -55,6 +61,7 @@ public class FixedThreadPool implements ThreadPool {
                         runnable.run();
                         System.out.println("Task completed by" + threadName);
                     } else {
+                            taskQueue.wait(3);
                             System.out.println("Waiting for tasks");
 
                     }
