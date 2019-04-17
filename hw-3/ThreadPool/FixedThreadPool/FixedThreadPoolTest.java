@@ -5,14 +5,14 @@ import java.util.ArrayList;
 public class FixedThreadPoolTest {
 
     @Test
-    public void poolStartsWorking(){
+    public void poolOneWorks(){
         FixedThreadPool threadPool = new FixedThreadPool(4);
 
         threadPool.start();
 
         ArrayList<Runnable> tasks = new ArrayList<>();
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 20; i++) {
             tasks.add(new Task(i));
         }
 
@@ -38,7 +38,7 @@ public class FixedThreadPoolTest {
     }
 
     @Test
-    public void pool2Works(){
+    public void poolTwoWorks(){
         FixedThreadPool2 threadPool2 = new FixedThreadPool2(4);
 
         threadPool2.start();
