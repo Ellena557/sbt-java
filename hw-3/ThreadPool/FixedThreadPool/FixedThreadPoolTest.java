@@ -1,3 +1,7 @@
+package Fixed;
+
+import Fixed.FixedThreadPool;
+import Fixed.FixedThreadPool2;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -51,6 +55,21 @@ public class FixedThreadPoolTest {
 
         for (Runnable task : tasks) {
             threadPool2.execute(task);
+        }
+    }
+
+    @Test
+    public void poolThreeWorks(){
+        FixedThreadPool3 threadPool3 = new FixedThreadPool3(6);
+
+        ArrayList<Runnable> tasks = new ArrayList<>();
+
+        for (int i = 0; i < 30; i++) {
+            tasks.add(new Task(i));
+        }
+
+        for (Runnable task : tasks) {
+            threadPool3.execute(task);
         }
     }
 }
