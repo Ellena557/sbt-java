@@ -11,3 +11,7 @@
 2. BeanUtils
 
 3. Threads
+
+4. Classloaders
+
+5. Кеширующий прокси
