@@ -67,9 +67,9 @@ public class FixedThreadPool3 implements ThreadPool {
 
     public void doTask(Runnable runnable){
         String threadName = Thread.currentThread().getName();
-        System.out.println("Task started by" + threadName);
+        System.out.println("Task started by " + threadName);
         runnable.run();
-        System.out.println("Task completed by" + threadName);
+        System.out.println("Task completed by " + threadName);
     }
 }
 

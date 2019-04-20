@@ -1,9 +1,11 @@
+package Fixed;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class FixedThreadPool implements ThreadPool {
+public class FixedThreadPool2 implements ThreadPool {
 
     /**
      * Количество потоков задается в конструкторе и не меняется.
@@ -13,7 +15,7 @@ public class FixedThreadPool implements ThreadPool {
     private final Queue<Runnable> taskQueue = new ConcurrentLinkedQueue<>(); //or use BlokingQueue
     private final List<Thread> workerThreads = new ArrayList<>();
 
-    public FixedThreadPool(int numThreads) {
+    public FixedThreadPool2(int numThreads) {
         if (numThreads <= 0) {
             throw new IllegalArgumentException();
         }
@@ -24,13 +26,7 @@ public class FixedThreadPool implements ThreadPool {
     public void start() {
         for (int count = 0; count < numThreads; count++) {
             String threadName = "Thread_" + count;
-            Thread thread = new Thread(() -> {
-                try {
-                    runTasks();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }) ;
+            Thread thread = new Thread(() -> runTasks()) ;
             thread.setName(threadName);
             workerThreads.add(thread);
             thread.start();
@@ -42,31 +38,39 @@ public class FixedThreadPool implements ThreadPool {
         if (runnable == null) {
             throw new NullPointerException();
         }
-        
+
         synchronized (taskQueue) {
             taskQueue.add(runnable);
-            taskQueue.notify();
+            taskQueue.notify();   // do we need it?
         }
     }
 
-    public void runTasks() throws InterruptedException {
+    public void runTasks(){
         start();
         while (!taskQueue.isEmpty()){
-            if(!taskQueue.isEmpty()) {
-                synchronized (taskQueue.peek()) {
-                    Runnable runnable = taskQueue.poll();
-                    if (runnable != null) {
-                        String threadName = Thread.currentThread().getName();
-                        System.out.println("Task started by" + threadName);
-                        runnable.run();
-                        System.out.println("Task completed by" + threadName);
-                    } else {
-                            taskQueue.wait(3);
-                            System.out.println("Waiting for tasks");
-
+            synchronized (taskQueue) {
+                if (!taskQueue.isEmpty()) {
+                    Runnable runnable = taskQueue.remove();
+                    String threadName = Thread.currentThread().getName();
+                    System.out.println("Task started by " + threadName);
+                    runnable.run();
+                    System.out.println("Task completed by " + threadName);
+                } else {
+                    try {
+                        System.out.println("Waiting for tasks");
+                        taskQueue.wait(1);
+                        break;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
             }
         }
     }
 }
+
+
+
+
+
+
