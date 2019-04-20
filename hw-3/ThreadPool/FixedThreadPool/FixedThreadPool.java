@@ -72,9 +72,3 @@ public class FixedThreadPool3 implements ThreadPool {
         System.out.println("Task completed by " + threadName);
     }
 }
-
-
-
-
-
-
