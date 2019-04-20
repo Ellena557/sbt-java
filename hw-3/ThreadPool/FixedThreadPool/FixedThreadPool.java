@@ -48,10 +48,10 @@ public class FixedThreadPool3 implements ThreadPool {
 
     public void runTasks(){
         while (!taskQueue.isEmpty()){
+            Runnable runnable = null;
             synchronized (taskQueue) {
                 if (!taskQueue.isEmpty()) {
-                    Runnable runnable = taskQueue.remove();
-                    doTask(runnable);
+                    runnable = taskQueue.remove();
                 } else {
                     try {
                         System.out.println("Waiting for tasks");
@@ -61,6 +61,10 @@ public class FixedThreadPool3 implements ThreadPool {
                         e.printStackTrace();
                     }
                 }
+            }
+
+            if (runnable != null) {
+                doTask(runnable);
             }
         }
     }
