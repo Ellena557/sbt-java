@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class FixedThreadPool3 implements ThreadPool {
+public class FixedThreadPool implements ThreadPool {
 
     /**
      * Количество потоков задается в конструкторе и не меняется.
@@ -15,7 +15,7 @@ public class FixedThreadPool3 implements ThreadPool {
     private final Queue<Runnable> taskQueue = new ConcurrentLinkedQueue<>(); //or use BlokingQueue
     private final List<Thread> workerThreads = new ArrayList<>();
 
-    public FixedThreadPool3(int numThreads) {
+    public FixedThreadPool(int numThreads) {
         if (numThreads <= 0) {
             throw new IllegalArgumentException();
         }
