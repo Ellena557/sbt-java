@@ -26,5 +26,4 @@ public class PluginURLClassloader extends URLClassLoader {
             return super.loadClass(name);
         }
     }
-
 }
