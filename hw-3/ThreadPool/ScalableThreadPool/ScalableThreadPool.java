@@ -9,7 +9,7 @@ public class ScalableThreadPool implements ThreadPool{
     private volatile int numThreads;
     private int minThreads;
     private int maxThreads;
-    private volatile int runingTasks;
+    private volatile int runningTasks;
 
     private final Queue<Runnable> taskQueue = new ConcurrentLinkedQueue<>(); //or use BlokingQueue
     private List<Thread> workerThreads = new ArrayList<>();
@@ -21,7 +21,7 @@ public class ScalableThreadPool implements ThreadPool{
         this.maxThreads = maxThreads;
         this.minThreads = minThreads;
         this.numThreads = minThreads;
-        this.runingTasks = 0;
+        this.runningTasks = 0;
     }
 
     @Override
@@ -40,7 +40,6 @@ public class ScalableThreadPool implements ThreadPool{
             workerThreads.add(thread);
             thread.start();
         }
-        //System.out.println("WT : " + workerThreads.size() + "NUMM : " + numThreads);
     }
 
     @Override
@@ -52,30 +51,14 @@ public class ScalableThreadPool implements ThreadPool{
         synchronized (taskQueue) {
             taskQueue.add(runnable);
             taskQueue.notify();   // do we need it?
-            /*if (runingTasks > 0 && runingTasks >= workerThreads.size() && workerThreads.size() < maxThreads){
-                addThread();
-            } */
         }
 
         start();
     }
 
     public void addThread() throws InterruptedException {
-
         System.out.println("Add a new thread");
-        //System.out.println("RT : " + runingTasks + " WT : " + workerThreads.size() + " Numm " + numThreads);
-        /*String threadName = "Thread_" + numThreads;
-        Thread thread = new Thread(() -> {
-            try {
-                runTasks();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }) ;
-        thread.setName(threadName);
-        workerThreads.add(thread);
-        thread.start();
-        */
+
         if (numThreads < maxThreads) {
             this.numThreads += 1;
         }
@@ -83,13 +66,11 @@ public class ScalableThreadPool implements ThreadPool{
 
     public void runTasks() throws InterruptedException {
         while (!taskQueue.isEmpty()){
-            //System.out.println(numThreads);
             Runnable runnable = null;
+
             synchronized (taskQueue) {
                 if (!taskQueue.isEmpty()) {
-                    //System.out.println(runingTasks);
                     runnable = taskQueue.remove();
-                    //System.out.println(runingTasks);
                 } else {
                     try {
                         System.out.println("Waiting for tasks");
@@ -102,32 +83,27 @@ public class ScalableThreadPool implements ThreadPool{
                     }
                 }
             }
-            //System.out.println(runingTasks);
 
-            this.runingTasks += 1;
+            this.runningTasks += 1;
             doTask(runnable);
-            this.runingTasks -= 1;
+            this.runningTasks -= 1;
         }
     }
 
     public void doTask(Runnable runnable) throws InterruptedException {
 
-        //this.runingTasks += 1;
         String threadName = Thread.currentThread().getName();
         System.out.println("Task started by " + threadName);
-        if (runingTasks > 0 &&
-                runingTasks > numThreads &&
-                numThreads < maxThreads){
 
+        if (runningTasks > 0 &&
+                runningTasks > numThreads &&
+                numThreads < maxThreads){
             addThread();
         }
-        runnable.run();
-        //System.out.println("RT : "+ runingTasks);
-        //System.out.println("WT size : " + workerThreads.size());
-        //System.out.println("num : " + numThreads);
-        System.out.println("Task completed by " + threadName);
-        //this.runingTasks -= 1;
 
+        runnable.run();
+
+        System.out.println("Task completed by " + threadName);
     }
 
     public void removeThreads() {
@@ -141,6 +117,7 @@ public class ScalableThreadPool implements ThreadPool{
                     e.printStackTrace();
                 }
             }
+
             System.out.println("Removing threads!!!");
         }
     }
