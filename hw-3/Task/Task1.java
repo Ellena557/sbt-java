@@ -14,12 +14,12 @@ public class Task1<T> {
 
         T taskResult;
 
-        if (isCounted){
+        if (isCounted) {
             taskResult =  result;
         }
 
         else {
-            synchronized (this){
+            synchronized (this) {
                 if (taskException != null) {
                     throw taskException;
                 }
