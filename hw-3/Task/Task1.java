@@ -2,8 +2,8 @@ import java.util.concurrent.Callable;
 
 public class Task1<T> {
     private final Callable<? extends T> callable;
-    private volatile T result;
-    private RuntimeException taskException;
+    private T result;                                   //volatile излишний 
+    private TaskExecutionException taskException;       //volatile излишний
     private volatile boolean isCounted;
 
     public Task1(Callable<? extends T> callable) {
@@ -11,32 +11,22 @@ public class Task1<T> {
     }
 
     public T get() {
-
-        T taskResult;
-
-        if (isCounted) {
-            taskResult =  result;
-        }
-
-        else {
+        if (!isCounted) {
             synchronized (this) {
-                if (taskException != null) {
-                    throw taskException;
-                }
-
                 if (!isCounted) {
                     try {
-                        result = callable.call();
+                        return result = callable.call();
                     } catch (Exception e) {
-                        taskException =  new RuntimeException(e.getMessage());
-                        throw taskException;
+                        this.taskException = new TaskExecutionException(e.getMessage());
+                        throw this.taskException;
+                    } finally {
+                        isCounted = true;
                     }
-                    isCounted = true;
                 }
-                taskResult = result;
             }
         }
 
-        return taskResult;
+        if (taskException != null) throw taskException;
+        return result;
     }
 }
