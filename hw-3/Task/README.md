@@ -1,8 +1,12 @@
 Main class: Task.java
 
+Better class from the lecture: Task1.java
+
 Exception: TaskExecutionException.java
 
 For checking: TestClass.java
+
+
 
 
 
