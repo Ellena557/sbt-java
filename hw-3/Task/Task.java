@@ -10,7 +10,6 @@ public class Task<T> {
     }
 
     public T get() {
-
         T taskResult = null;
 
         if (result != null) {
