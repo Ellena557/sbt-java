@@ -15,15 +15,15 @@ public class UniquePluginName {
     }
 
     @Override
-    public boolean equals(Object o){
-        UniquePluginName plugO = (UniquePluginName) o;
+    public boolean equals(Object o) {
+        UniquePluginName plugObject = (UniquePluginName) o;
+
         if (o == null ||
             this.getClass() != o.getClass() ||
-            !this.pluginName.equals(plugO.pluginName) ||
-            !this.className.equals(plugO.className)){
+            !this.pluginName.equals(plugObject.pluginName) ||
+            !this.className.equals(plugObject.className)){
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }
