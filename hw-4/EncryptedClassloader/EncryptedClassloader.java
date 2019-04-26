@@ -17,7 +17,7 @@ public class EncryptedClassloader extends ClassLoader {
     }
 
     @Override
-    protected Class<?> findClass(String name){
+    protected Class<?> findClass(String name) {
         String className = name.replace('.', '/') + ".class";
         String path = dir.getPath() + "/" + className;
 
@@ -29,11 +29,10 @@ public class EncryptedClassloader extends ClassLoader {
         }
 
         Class<?> clazz = defineClass(name, decryptedBytes, 0, decryptedBytes.length);
-
         return clazz;
     }
 
-    private byte[] loadEncryptedClass(String name, String path){
+    private byte[] loadEncryptedClass(String name, String path) {
         byte[] encryption = null;
         try {
             encryption = Files.readAllBytes(Paths.get(path));
@@ -48,12 +47,12 @@ public class EncryptedClassloader extends ClassLoader {
         return encryption;
     }
 
-    private byte encrypt(byte b){
+    private byte encrypt(byte b) {
         int num = b + key.hashCode() + encodingNumber;
         return (byte) num;
     }
 
-    private byte decrypt(byte b){
+    private byte decrypt(byte b) {
         int num = b - key.hashCode() - encodingNumber;
         return (byte) num;
     }
