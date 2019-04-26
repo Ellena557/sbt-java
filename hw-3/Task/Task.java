@@ -3,7 +3,6 @@ import java.util.concurrent.Callable;
 public class Task<T> {
     private final Callable<? extends T> callable;
     private volatile T result;
-    private TaskExecutionException taskException = null;
 
 
     public Task(Callable<? extends T> callable) {
@@ -12,24 +11,17 @@ public class Task<T> {
 
     public T get() {
 
-        /*if (taskException != null) {
-            throw taskException;
-        }
-        */
-
         T taskResult = null;
 
-        if (result != null){
+        if (result != null) {
             taskResult =  result;
-        }
-
-        else {
-            synchronized (this){
+        } else {
+            synchronized (this) {
                 if (result == null) {
                     try {
                         result = callable.call();
                     } catch (Exception e) {
-                        taskException = new TaskExecutionException(e.getMessage());
+                        TaskExecutionException taskException = new TaskExecutionException(e.getMessage());
                         throw taskException;
                     }
                 }
@@ -40,4 +32,3 @@ public class Task<T> {
         return taskResult;
     }
 }
-
