@@ -11,9 +11,10 @@ public class FixedThreadPool implements ThreadPool {
      * Количество потоков задается в конструкторе и не меняется.
      */
 
-    private int numThreads;
-    private final Queue<Runnable> taskQueue = new ConcurrentLinkedQueue<>(); //or use BlokingQueue
-    private final List<Thread> workerThreads = new ArrayList<>();
+    private final int numThreads;
+    private final Queue<Runnable> taskQueue = new ConcurrentLinkedQueue<>();
+    private List<Thread> workerThreads = new ArrayList<>();
+    private volatile boolean taskTaken = false;
 
     public FixedThreadPool(int numThreads) {
         if (numThreads <= 0) {
@@ -26,9 +27,10 @@ public class FixedThreadPool implements ThreadPool {
     public void start() {
         for (int count = 0; count < numThreads; count++) {
             String threadName = "Thread_" + count;
-            Thread thread = new Thread(() -> runTasks()) ;
+            Thread thread = new Thread(this::runTasks);
             thread.setName(threadName);
             workerThreads.add(thread);
+            thread.setDaemon(true);
             thread.start();
         }
     }
@@ -41,35 +43,41 @@ public class FixedThreadPool implements ThreadPool {
 
         synchronized (taskQueue) {
             taskQueue.add(runnable);
-            taskQueue.notify();   // do we need it?
+            taskQueue.notify();
         }
-        start();
     }
 
-    public void runTasks(){
-        while (!taskQueue.isEmpty()){
-            Runnable runnable = null;
-            synchronized (taskQueue) {
-                if (!taskQueue.isEmpty()) {
-                    runnable = taskQueue.remove();
-                } else {
-                    try {
-                        System.out.println("Waiting for tasks");
-                        taskQueue.wait(1);
-                        break;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+    public void runTasks() {
+        while (true) {
+            if (!taskQueue.isEmpty()) {
+                Runnable runnable = null;
+                taskTaken = false;
+
+                synchronized (taskQueue) {
+                    if (!taskQueue.isEmpty()) {
+                        runnable = taskQueue.remove();
+                        taskTaken = true;
+                    } else {
+                        try {
+                            System.out.println("Waiting for tasks");
+                            taskQueue.wait(1);
+                            break;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
 
-            if (runnable != null) {
-                doTask(runnable);
+                if (taskTaken) {
+                    doTask(runnable);
+                    taskTaken = false;
+                }
             }
         }
+
     }
 
-    public void doTask(Runnable runnable){
+    public void doTask(Runnable runnable) {
         String threadName = Thread.currentThread().getName();
         System.out.println("Task started by " + threadName);
         runnable.run();
