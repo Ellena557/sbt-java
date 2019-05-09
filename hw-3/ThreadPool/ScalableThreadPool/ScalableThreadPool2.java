@@ -14,7 +14,7 @@ public class ScalableThreadPool2 implements ThreadPool {
     private final Queue<Runnable> taskQueue = new ConcurrentLinkedQueue<>();
     private List<Thread> workerThreads = new ArrayList<>();
 
-    public ScalableThreadPool2(int minThreads, int maxThreads){
+    public ScalableThreadPool2(int minThreads, int maxThreads) {
         if (minThreads <= 0 || minThreads > maxThreads) {
             throw new IllegalArgumentException();
         }
