@@ -71,7 +71,6 @@ public class ExecutionManagerImplThreadPool implements ExecutionManager {
         @Override
         public void interrupt() {
             synchronized (lock) {
-                System.out.println("INTERRUPTING");
                 isInterrupted.set(true);
                 if (currentTaskNumber > 0) {
                     interruptedTaskCount.addAndGet(currentTaskNumber);
@@ -107,12 +106,11 @@ public class ExecutionManagerImplThreadPool implements ExecutionManager {
                     if (!isInterrupted.get()) {
                         task.run();
                         completedTaskCount.incrementAndGet();
-                        System.out.println("COMPLETED " + Thread.currentThread().getName());
                         currentTaskNumber --;
                     }
                 }
             }
-            catch (InterruptedException e){
+            catch (InterruptedException e) {
                 //pass
             }
             catch (Exception e){
