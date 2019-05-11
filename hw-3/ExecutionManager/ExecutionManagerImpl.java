@@ -22,6 +22,7 @@ public class ExecutionManagerImpl implements ExecutionManager {
         if (tasks == null || tasks.length == 0) {
             throw new NullPointerException();
         }
+        
         isInterrupted.set(false);
         taskQueue = new ConcurrentLinkedQueue<>(Arrays.asList(tasks));
         int taskNumber = tasks.length;
@@ -29,19 +30,15 @@ public class ExecutionManagerImpl implements ExecutionManager {
         //little check
         assert taskNumber == taskQueue.size();
 
-        createThreads(callback, tasks);
+        createThreads(tasks);
         callbackThread = createCallbackThread(callback);
 
         return new ContextImpl(taskNumber);
     }
 
-    private void createThreads(Runnable callback, Runnable... tasks){
+    private void createThreads(Runnable... tasks){
 
         //not to create useless threads
-        /*if (numThreads > tasks.length){
-            numThreads = tasks.length;
-        }*/
-
         numThreads = tasks.length;
 
         for (int count = 0; count < numThreads; count++) {
@@ -53,7 +50,7 @@ public class ExecutionManagerImpl implements ExecutionManager {
         }
     }
 
-    private Thread createCallbackThread(Runnable callback){
+    private Thread createCallbackThread(Runnable callback) {
         Thread callbackThread = new Thread(callback::run);
         callbackThread.setName("callback");
         callbackThread.start();
@@ -61,16 +58,9 @@ public class ExecutionManagerImpl implements ExecutionManager {
     }
 
     public class ContextImpl implements Context {
-        //private AtomicInteger completedTaskCount;
-        //private AtomicInteger failedTaskCount;
-        //private AtomicInteger interruptedTaskCount = new AtomicInteger();
         private int tasksNumber;
-        //private List<Thread> threads;
 
         public ContextImpl(int tasksNumber) {
-            //this.completedTaskCount = completedTaskCount;
-            //this.failedTaskCount = failedTaskCount;
-            //this.threads = threads;
             this.tasksNumber = tasksNumber;
         }
 
@@ -91,7 +81,6 @@ public class ExecutionManagerImpl implements ExecutionManager {
 
         @Override
         public void interrupt() {
-            //System.out.println("INTERRUPTING");
             isInterrupted.set(true);
 
             for (Thread thread : threads) {
@@ -106,17 +95,12 @@ public class ExecutionManagerImpl implements ExecutionManager {
 
         @Override
         public boolean isFinished() {
-            System.out.println("C " + completedTaskCount.get());
-            System.out.println(getCompletedTaskCount());
-            System.out.println(getInterruptedTaskCount());
-            System.out.println(" I " + interruptedTaskCount.get());
-            System.out.println(tasksNumber);
             return (getCompletedTaskCount() + getInterruptedTaskCount() == tasksNumber);
         }
     }
 
 
-    public class RunThreadsClass implements Runnable{
+    public class RunThreadsClass implements Runnable {
 
         private final Runnable task;
 
@@ -130,22 +114,14 @@ public class ExecutionManagerImpl implements ExecutionManager {
                 if(Thread.currentThread().isInterrupted()){
                     throw new InterruptedException();
                 }
-                //System.out.println(isInterrupted);
 
                 if (!isInterrupted.get()) {
-                    //synchronized (isInterrupted) {
-                        //if (!isInterrupted.get()) {
                     task.run();
                     completedTaskCount.incrementAndGet();
-                    //System.out.println("COMPLETED : " + Thread.currentThread().getName());
-                    //System.out.println("CC " + isInterrupted.get());
-                        //}
-                    //}
                 }
             }
             catch (InterruptedException e){
-                //interruptedTaskCount.incrementAndGet();
-                //System.out.println("INTERRUPTED : " + Thread.currentThread().getName());
+                interruptedTaskCount.incrementAndGet();
             }
             catch (Exception e){
                 failedTaskCount.incrementAndGet();
@@ -153,5 +129,3 @@ public class ExecutionManagerImpl implements ExecutionManager {
         }
     }
 }
-
-
