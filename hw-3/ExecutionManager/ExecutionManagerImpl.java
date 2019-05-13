@@ -90,7 +90,7 @@ public class ExecutionManagerImpl implements ExecutionManager {
                 }
             }
 
-            callbackThread.interrupt();
+            //callbackThread.interrupt();
         }
 
         @Override
