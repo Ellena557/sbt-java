@@ -30,3 +30,17 @@ public interface Context {
 Метод getInterruptedTaskCount() возвращает количество тасков, которые не были выполены из-за отмены (вызовом предыдущего метода).
 
 Метод isFinished() вернет true, если все таски были выполнены или отменены, false в противном случае.  
+
+
+
+Реализация:
+
+ExecutionManager.java : interface
+
+ExecutionManagerImpl.java : 1-ая реализация
+
+ExecutionManagerImplThreadPool.java : 2-ая реализация
+
+Context.java : interface
+
+TestClass.java : для тестирования
