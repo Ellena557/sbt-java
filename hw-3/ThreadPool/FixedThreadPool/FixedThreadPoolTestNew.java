@@ -7,24 +7,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 public class FixedThreadPoolTestNew {
-
-    @Test
-    public void poolOneWorks(){
-        FixedThreadPool threadPool = new FixedThreadPool(4);
-
-
-        ArrayList<Runnable> tasks = new ArrayList<>();
-
-        for (int i = 0; i < 20; i++) {
-            tasks.add(new Task(i));
-        }
-
-        threadPool.start();
-        for (Runnable task : tasks) {
-            threadPool.execute(task);
-        }
-    }
-
+   
     static class Task implements Runnable {
         String createdBy;
         int number;
@@ -42,24 +25,7 @@ public class FixedThreadPoolTestNew {
     }
 
     @Test
-    public void poolTwoWorks(){
-        FixedThreadPool2 threadPool2 = new FixedThreadPool2(4);
-
-        threadPool2.start();
-
-        ArrayList<Runnable> tasks = new ArrayList<>();
-
-        for (int i = 0; i < 20; i++) {
-            tasks.add(new Task(i));
-        }
-
-        for (Runnable task : tasks) {
-            threadPool2.execute(task);
-        }
-    }
-
-    @Test
-    public void poolThreeWorks(){
+    public void poolNewWorks(){
         ArrayList<Runnable> tasks = new ArrayList<>();
 
         for (int i = 0; i < 30; i++) {
