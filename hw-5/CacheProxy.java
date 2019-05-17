@@ -44,11 +44,18 @@ public class CacheProxy implements InvocationHandler {
     }
 
     private Object invokeMethod(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
-        Map cache = getCacheValue(method);
+        //System.out.println(method);
         List params = Arrays.asList(args);
 
         Cache cacheAnnotation = method.getAnnotation(Cache.class);
         Class[] identities = cacheAnnotation.identityBy();
+        String nameOfKey = cacheAnnotation.keyName();
+
+        if (nameOfKey == ""){
+            nameOfKey = method.getName();
+        }
+
+        Map cache = getCacheValue(nameOfKey);
 
         List mentionedParams = new ArrayList();
 
@@ -71,6 +78,8 @@ public class CacheProxy implements InvocationHandler {
 
 
         Object vals = cache.get(mentionedParams);
+        //System.out.println(vals.getClass());
+
 
         //System.out.println("keys : " + cache.keySet());
         //System.out.println("pars : " + mentionedParams);
@@ -91,6 +100,18 @@ public class CacheProxy implements InvocationHandler {
             //System.out.println("RES : " + (vals == null || !cache.containsKey(mentionedParams)));
             System.out.println("Counting new value");
             vals = method.invoke(object, args);
+            //System.out.println(method.getReturnType());
+
+            if (method.getReturnType() == List.class) {
+                //System.out.println("LIST CASE");
+                List valsList = (List) method.invoke(object, args);
+                //System.out.println("okay");
+                int maxListSize = cacheAnnotation.listList();
+                if (valsList.size() > maxListSize) {
+                    vals = valsList.subList(0, maxListSize);
+                }
+            }
+
             cache.put(mentionedParams, vals);
             //for (Object param : mentionedParams){
               //  System.out.println(param.getClass());
@@ -109,7 +130,7 @@ public class CacheProxy implements InvocationHandler {
 
 
 
-    private Map getCacheValue(Method method){
+    private Map getCacheValue(String method){
 
         Map cache = (Map) cacheMap.get(method);
 
