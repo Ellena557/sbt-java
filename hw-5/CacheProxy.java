@@ -13,26 +13,16 @@ public class CacheProxy implements InvocationHandler, Serializable {
     private Object[] args;
     private Object object;
 
-    /*private Method method;
-    public CacheProxy(Method method, Object[] args) {
-        this.cacheMap = new HashMap();
-        this.method = method;
-        this.args = args;
-    } */
-
     private CacheProxy(Object args) {
         this.cacheMap = new HashMap();
         this.object = args;
-        //this.args = args;
     }
 
     static Object cacheObject(Object o) {
         Class clazz = o.getClass();
         ClassLoader classLoader = clazz.getClassLoader();
         Class[] interfaces = clazz.getInterfaces();
-
         Object proxy = Proxy.newProxyInstance(classLoader, interfaces, new CacheProxy(o));
-
         return proxy;
     }
 
@@ -43,34 +33,29 @@ public class CacheProxy implements InvocationHandler, Serializable {
         } else {
             return method.invoke(object, args);
         }
-
     }
 
     private Object invokeMethod(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
-        //System.out.println(method);
         List params = Arrays.asList(args);
 
         Cache cacheAnnotation = method.getAnnotation(Cache.class);
         Class[] identities = cacheAnnotation.identityBy();
-        //System.out.println(identities);
         String nameOfKey = cacheAnnotation.keyName();
         CacheType cachType = cacheAnnotation.cacheType();
         boolean zip = cacheAnnotation.zip();
+        List mentionedParams = new ArrayList();
 
         if (nameOfKey == ""){
             nameOfKey = method.getName();
         }
 
-        List mentionedParams = new ArrayList();
 
         for (Object param : params) {
             boolean isMentioned = false;
-            //System.out.println("OOO" + param);
 
             for (int i = 0; i < identities.length; i++) {
                 if (identities[i] == param.getClass()) {
                     isMentioned = true;
-                    //System.out.println(identities[i] + " III");
                 }
             }
 
@@ -84,10 +69,6 @@ public class CacheProxy implements InvocationHandler, Serializable {
         Object vals = null;
         Map cache = null;
 
-        //Class[] defaultClass = new Class[1];
-        //defaultClass[0] = Class.class;
-
-        // if we have default identities
         if (identities[0] == Class.class) {
             mentionedParams = params;
         }
@@ -95,7 +76,6 @@ public class CacheProxy implements InvocationHandler, Serializable {
         if (cachType == CacheType.IN_MEMORY) {
             cache = getCacheValue(nameOfKey);
             vals = cache.get(mentionedParams);
-
         } else {
             try {
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName));
@@ -103,60 +83,24 @@ public class CacheProxy implements InvocationHandler, Serializable {
 
                 vals = cache.get(mentionedParams);
                 ois.close();
-                /*String mentionedParamsStr = "";
-                for (Object param : mentionedParams) {
-
-                }
-                ArrayList<ArrayList<Object>> cache = (ArrayList<ArrayList<Object>>) ois.readObject();
-                for (ArrayList<Object> obj : cache) {
-                    if
-                }*/
             } catch (FileNotFoundException e) {
-                File file = new File(fileName);
                 cache = new HashMap();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
-
-
-        //System.out.println(mentionedParams + "PPPPPP");
-
-        //System.out.println(vals.getClass());
-
-
-        //System.out.println("keys : " + cache.keySet());
-        //System.out.println("pars : " + mentionedParams);
-
-        //boolean cacheContainsKey = false;
-
-        /*for (Object object : cache.keySet()) {
-            if (object == mentionedParams){
-                cacheContainsKey = true;
-            }
-        }
-        */
-
-        //System.out.println(cache.containsKey(mentionedParams));
-        //System.out.println("CONTAINTS + " + cacheContainsKey);
 
         if (vals == null || !cache.containsKey(mentionedParams)) {
-            //System.out.println("RES : " + (vals == null || !cache.containsKey(mentionedParams)));
+
             System.out.println("Counting new value");
             vals = method.invoke(object, args);
-            //System.out.println(method.getReturnType());
 
             if (method.getReturnType() == List.class) {
-                //System.out.println("LIST CASE");
                 List valsList = (List) method.invoke(object, args);
-                //System.out.println("okay");
                 int maxListSize = cacheAnnotation.listList();
                 if (valsList.size() > maxListSize) {
                     vals = valsList.subList(0, maxListSize);
                 }
-
             }
 
             cache.put(mentionedParams, vals);
@@ -182,24 +126,15 @@ public class CacheProxy implements InvocationHandler, Serializable {
                     e.printStackTrace();
                 }
             }
-            //for (Object param : mentionedParams){
-              //  System.out.println(param.getClass());
-            //}
-            //System.out.println(cache.keySet());
-            //System.out.println(vals);
         } else {
             System.out.println("Take result from cache");
         }
 
-        /*for (Object objects : cacheMap.entrySet()) {
-            System.out.println(objects);
-        }*/
         return vals;
     }
 
 
     private Map getCacheValue(String method){
-
         Map cache = (Map) cacheMap.get(method);
 
         if (cache == null) {
