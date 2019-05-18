@@ -33,7 +33,6 @@ public class ServiceImpl implements Service {
     @Override
     @Cache(identityBy = String.class, keyName = "file", cacheType = CacheType.FILE)
     public double doFileWork(String s, int a) {
-        //System.out.println(s + " " + a);
         double r = a;
         return r;
     }
@@ -41,7 +40,6 @@ public class ServiceImpl implements Service {
     @Override
     @Cache(identityBy = String.class, keyName = "zip", cacheType = CacheType.FILE, zip = true)
     public double doZipWork(String s, int a) {
-        //System.out.println(s + " " + a);
         double r = a * 2;
         return r;
     }
