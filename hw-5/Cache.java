@@ -7,9 +7,8 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 public @interface Cache {
     CacheType cacheType() default CacheType.IN_MEMORY;
-    //String fileNamePrefix();
     boolean zip() default false;
-    Class[] identityBy();
+    Class[] identityBy() default Class.class;
     String keyName() default "";
     int listList() default Integer.MAX_VALUE;
 }
