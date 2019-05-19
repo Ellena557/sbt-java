@@ -18,4 +18,7 @@ public interface Service {
 
     @Cache()
     double doParameterWork(String s, int a);
+
+    @Cache(identityBy = {String.class, Integer.class}, keyName = "extra name", cacheType = CacheType.FILE, zip = true)
+    double doExtraWork(String s, int a);
 }
