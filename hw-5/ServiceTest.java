@@ -3,7 +3,6 @@ import java.util.List;
 public class ServiceTest {
     public static void main(String[] args) {
         ServiceImpl service = new ServiceImpl();
-        //run(service);
 
         Service service1 = (Service) CacheProxy.cacheObject(service);
 
@@ -42,12 +41,17 @@ public class ServiceTest {
 
         double r11 = service1.doParameterWork("work1", 10);
         double r12 = service1.doParameterWork("work1", 5);
+
+        extraCheck(service);
     }
 
-    static void run(ServiceImpl service) {
-        double r1 = service.doHardWork("work1", 10); //считает результат
-        double r2 = service.doHardWork("work2", 5);  //считает результат
-        double r3 = service.doHardWork("work1", 10); //результат из кеша
+    static void extraCheck(ServiceImpl service) {
+        Service service1 = (Service) CacheProxy.cacheObject(service);
+        System.out.println();
+        System.out.println("Extra test");
+        double r1 = service1.doExtraWork("work1", 10); //считает результат
+        double r2 = service1.doExtraWork("work2", 5);  //считает результат
+        double r3 = service1.doExtraWork("work1", 10); //результат из кеша
+        double r4 = service1.doExtraWork("work1", 5);
     }
-    
 }
