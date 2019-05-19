@@ -51,4 +51,11 @@ public class ServiceImpl implements Service {
         double r = a * 2;
         return r;
     }
+
+    @Override
+    @Cache(identityBy = {String.class, Integer.class}, keyName = "extra name", cacheType = CacheType.FILE, zip = true)
+    public double doExtraWork(String s, int a) {
+        double r = a;
+        return r;
+    }
 }
