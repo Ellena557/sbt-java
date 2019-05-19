@@ -45,21 +45,18 @@ public class CacheProxy implements InvocationHandler, Serializable {
         boolean zip = cacheAnnotation.zip();
         List mentionedParams = new ArrayList();
 
-        if (nameOfKey == ""){
+        if (nameOfKey == "") {
             nameOfKey = method.getName();
         }
 
-
         for (Object param : params) {
             boolean isMentioned = false;
-
             for (int i = 0; i < identities.length; i++) {
                 if (identities[i] == param.getClass()) {
                     isMentioned = true;
                 }
             }
-
-            if (isMentioned){
+            if (isMentioned) {
                 mentionedParams.add(param);
             }
         }
@@ -67,7 +64,7 @@ public class CacheProxy implements InvocationHandler, Serializable {
         String fileName = nameOfKey + ".txt";
         String zipFileName = nameOfKey + ".zip";
         Object vals = null;
-        Map cache = null;
+        Map cache;
 
         if (identities[0] == Class.class) {
             mentionedParams = params;
@@ -85,9 +82,12 @@ public class CacheProxy implements InvocationHandler, Serializable {
                 ois.close();
             } catch (FileNotFoundException e) {
                 cache = new HashMap();
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException("Problem while closing the file", e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("Can't close the file, check that it exists and path to it", e);
             }
+
         }
 
         if (vals == null || !cache.containsKey(mentionedParams)) {
@@ -123,25 +123,21 @@ public class CacheProxy implements InvocationHandler, Serializable {
                         zos.close();
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException("Problem while closing the file", e);
                 }
             }
         } else {
             System.out.println("Take result from cache");
         }
-
         return vals;
     }
 
-
-    private Map getCacheValue(String method){
+    private Map getCacheValue(String method) {
         Map cache = (Map) cacheMap.get(method);
-
         if (cache == null) {
             cache = new HashMap();
             cacheMap.put(method, cache);
         }
-
         return cache;
     }
 }
